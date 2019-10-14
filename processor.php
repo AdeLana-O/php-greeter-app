@@ -18,7 +18,7 @@ if($_POST) {
   } else {
     $name = clean($_POST["name"]);
     
-    if(!preg_match("/^[a-zA-Z ]*$/", $name)) {
+    if(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
       $nameErr = '<div class="error">Enter A Valid Name</div>';
     }
   }
