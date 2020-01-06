@@ -7,7 +7,6 @@ function clean($input) {
   return $input;
 }
 
-// Initialize variables
 $name = $gender = $status = $dob = "";
 $nameErr = $genderErr = $statusErr = $dobErr = "";
 $currentYear = date("Y");
@@ -20,9 +19,8 @@ if($_POST) {
     $nameErr = '<div class="error">Enter Your Name</div>';
   } else {
     $name = clean($_POST["name"]);
-    
-    // Use RegExp to ensure proper name format
-    if(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
+
+    if(!preg_match("/^([a-zA-Z]*)\s*([a-zA-Z]*)$/", $name)) {
       $nameErr = '<div class="error">Enter A Valid Name</div>';
     }
   }
@@ -46,38 +44,12 @@ if($_POST) {
     $dobErr = '<div class="error">Select Date of Birth</div>';
   } else {
     $dob = clean(strtotime($_POST["date"]));
-    $birthYear = date("Y", $dob); // Extract the birth year
-
-    //Calculate current age to determine the proper title for the greeter message
-    $age = (($currentYear - $birthYear) >= 18) ? "adult" : "underage";
-  }
-
-  // Determine the correct title for all males based on gender, age
-  if($gender == "male" && $age == "adult") {
-    $sex = "Mr";
-  } else {
-    $sex = "Master";
-  }
-
-  // Get the correct title for all females based on gender, age, and marital status
-  if($gender == "female" && $status == "married") {
-    $sex = "Mrs";
-  }	elseif($gender == "female" && $age == "adult" && (
-    $status == "divorced" || $status == "single" ||
-    $status == "separated")) {
-    $sex = "Ms";
-  } elseif($gender == "female" && $age == "underage") {
-    $sex = "Miss";
-  } else {
-
   }
 
 
   // If there are no errors, process the greeter message
   if(empty($nameErr) && empty($genderErr) && empty($statusErr) && empty($dobErr)) {
-    $timeOfDay = date("H"); // Get the hour of the day
-
-    // Print the correct greeting based on the hour of the day
+    $timeOfDay = date("H");
     switch($timeOfDay) {
       case $timeOfDay < 12:
         $greet = "Good Morning";
@@ -87,11 +59,24 @@ if($_POST) {
         break;
       default:
         $greet = "Good Day";
-    } 
+    }
 
-    // The greeter message
-    $msg = '<div class="greeting">' . $greet . " " . $sex . " " . $name . '</div>';
+    $birthYear = date("Y", $dob);
+    $age = (($currentYear - $birthYear) >= 18) ? "adult" : "underage";
+
+    if($gender == "male") {
+      $title = ($age == "adult") ? "Mr" : "Master";
+    }
+
+    if($gender == "female") {
+      if ($age == "underage") {
+        $title = "Miss";
+      } else {
+        $title = ($status == "single" || $status == "divorced") ? "Miss" : "Mrs";
+      }
+    }
+
+    $msg = '<div class="greeting">' . $greet . " " . $title . " " . $name . '</div>';
   }
 }
-
 ?>

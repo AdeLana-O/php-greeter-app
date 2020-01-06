@@ -1,8 +1,6 @@
 <?php
-
 require "processor.php";
-
-?> 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
